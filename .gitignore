@@ -6,8 +6,13 @@ __pycache__/
 # C extensions
 *.so
 
+# Personal files
+PROJECT_NOTES.md
+your.warframe.code-workspace
+
 # Distribution / packaging
 .Python
+backup/
 build/
 develop-eggs/
 dist/
