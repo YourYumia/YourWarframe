@@ -101,8 +101,7 @@ def getFissures():
     
         # API fetch returned as 'dict' generated from parsed JSON data
         data = res.json()
-        BASE_PATH = tuple(pb.filter(data, lambda f: not f["isHard"] and f["tier"] == "Omnia"))
-        STEEL_PATH = tuple(pb.filter(data, lambda f: f["isHard"] and f["tier"] == "Omnia"))
+        MISSIONS = tuple(pb.filter(data, lambda f: f["tier"] == "Omnia"))
         IDEAL_FISSURES = ("Survival", "Void Cascade")
 
         node:str
@@ -111,8 +110,8 @@ def getFissures():
         notif_message:str
         title:str
         
-        for m in BASE_PATH:
-            node = m["node"]
+        for m in MISSIONS:
+            node = m["node"] if not m["isHard"] else f"Steel Path {m["node"]}"
             mission_type = m["missionType"]
             date_time = getDateTime(formatExpiry(m["expiry"]))
             title = f"{mission_type} Fissure"
@@ -120,18 +119,7 @@ def getFissures():
 
             if mission_type in IDEAL_FISSURES:
                 sendNotification(title, notif_message)
-                print(f"{node} — {mission_type} (Omnia)\nEnds at {date_time}\n")
-
-        for m in STEEL_PATH:
-            node = m["node"]
-            mission_type = m["missionType"]
-            date_time = getDateTime(formatExpiry(m["expiry"]))
-            title = f"Steel Path {mission_type} Fissure"
-            notif_message = f"{node} — {mission_type} (Omnia)\nEnds at {date_time}"
-
-            if mission_type in IDEAL_FISSURES:
-                sendNotification(title, notif_message)
-                print(f"Steel Path {node} — {mission_type} (Omnia)\nEnds at {date_time}\n")
+                print(notif_message)
 
         stop_event.wait(1800)# checks fissures every 30 minutes
 
