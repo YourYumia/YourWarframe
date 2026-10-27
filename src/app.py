@@ -1,7 +1,6 @@
 from threading import Thread, Event
 from datetime import datetime, UTC
 from plyer import notification
-from YumiaCode import Playbox as pb
 import requests, time, pathlib, sys
 
 stop_event = Event()
@@ -49,7 +48,7 @@ def getArchon():
             continue
 
         data = res.json()
-        missions = tuple(pb.map(data["missions"], lambda m: m["type"]))
+        missions = tuple(map(lambda m: m["type"], data["missions"]))
         date_time = getDateTime(formatExpiry(data["expiry"]))
         
 
@@ -101,7 +100,7 @@ def getFissures():
     
         # API fetch returned as 'dict' generated from parsed JSON data
         data = res.json()
-        MISSIONS = tuple(pb.filter(data, lambda f: f["tier"] == "Omnia"))
+        MISSIONS = tuple(filter(lambda f: f["tier"] == "Omnia", data))
         IDEAL_FISSURES = ("Survival", "Void Cascade")
 
         node:str
