@@ -20,7 +20,7 @@ git commit -m "%msg%"
 echo attempting to push to origin main...
 git push origin main
 echo attempting to push to gitea main...
-git push https://gitea.com/your.yumia/YourWarframe main
+git push gitea main
 
 pause
 cls
