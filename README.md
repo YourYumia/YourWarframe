@@ -1,5 +1,5 @@
 # YourWarframe
-A Warframe even tracker made by Yumia for personal use and coding practice.
+A Warframe event tracker made by Yumia for personal use and coding practice.
 ## Features
 ### Specialised Fissure Alerts
 - Receive updates about Omnia Survival and Void Cascade Fissures
