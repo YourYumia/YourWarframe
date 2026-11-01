@@ -14,16 +14,21 @@ def get_icon_path() -> pathlib.Path:
     return curr_path / "warframe.ico"
 
 
+
 def formatExpiry(srcDateTime:str) -> str:
     mDate = srcDateTime.split("-")[:2]
     mDate.append(srcDateTime.split("T")[0][8:10])
     mTime = "".join(srcDateTime.split("T")[1][0:5])
     return f"{mDate[1]}/{mDate[2]}/{mDate[0]} ({mTime})"
 
+
+
 def getDateTime(utcTimeStr:str) -> str:
     utc_datetime = datetime.strptime(utcTimeStr, "%m/%d/%Y (%H:%M)").replace(tzinfo=UTC)
     local_datetime = utc_datetime.astimezone()
     return local_datetime.strftime("%d/%m/%Y (%H:%M)")
+
+
 
 def getArchon():
     url = f"https://api.warframestat.us/pc/archonHunt"
@@ -66,6 +71,8 @@ def getArchon():
 
         stop_event.wait(57600)# check every 16 hours
 
+
+
 def sendNotification(title, notif_message) -> None:
     notification.notify(
         title = title,
@@ -74,6 +81,7 @@ def sendNotification(title, notif_message) -> None:
         app_name = "Your.Warframe",
         app_icon = str(get_icon_path())
     )
+
 
 
 def getFissures():
@@ -133,11 +141,11 @@ def main():
     LAUNCH_TIME = datetime.now().strftime("%d/%m/%Y (%H:%M)")
 
     print("Your.Warframe Online!\n")
-    print(f"[tracking starts]: {LAUNCH_TIME}\n")
+    print(f"[tracking starts]: {LAUNCH_TIME}")
 
     for t in threads:
         t.start()
-        print(f"[launched {t.name}]\n")
+        print(f"\n[launched {t.name}]\n")
         time.sleep(1)
 
     try:
