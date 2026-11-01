@@ -41,7 +41,17 @@ def sendNotification(title, notif_message) -> None:
 
 
 
-def getArchon():
+def getDuviri() -> None:
+    pass
+
+
+
+def getArchimedea() -> None:
+    pass
+
+
+
+def getArchon() -> None:
     url = f"https://api.warframestat.us/pc/archonHunt"
     
     while not stop_event.is_set():
@@ -84,7 +94,7 @@ def getArchon():
         
         
 
-def getNightwave():
+def getNightwave() -> None:
     url = f"https://api.warframestat.us/pc/nightwave"
 
     while not stop_event.is_set():
@@ -126,7 +136,7 @@ def getNightwave():
 
 
 
-def getFissures():
+def getFissures() -> None:
     url = f"https://api.warframestat.us/pc/fissures"
 
     while not stop_event.is_set():
@@ -174,7 +184,7 @@ def getFissures():
 
 
 
-def main():
+def main() -> str:
     threads = [
         Thread(target=getFissures, name="Fissure Tracker", daemon=True),
         Thread(target=getArchon, name="Archon Tracker", daemon=True),
@@ -195,21 +205,19 @@ def main():
         stop_event.wait()
     except KeyboardInterrupt as e:
         END_TIME = datetime.now().strftime("%d/%m/%Y (%H:%M)")
-        print("Your.Warframe Offline! (window will close itself)\n")
         stop_event.set()
     except RuntimeError as e:
         pass
     finally:
-        print(f"[tracking ran from: {LAUNCH_TIME} to {END_TIME}]")
-        time.sleep(9)
-
-    for t in threads:
-        if t.is_alive():
-            continue
-        t.join()
-
+        for t in threads:
+            if t.is_alive():
+                continue
+            t.join()
+    
+    return f"Your.Warframe Offline! (window will close itself)\n• Tracking ran from: {LAUNCH_TIME} to {END_TIME}"
 
 
 
 if __name__ == "__main__":
-    main()
+    print(main())
+    time.sleep(9)
