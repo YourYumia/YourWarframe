@@ -23,3 +23,4 @@ echo attempting to push to gitea main...
 git push https://gitea.com/your.yumia/YourWarframe main
 
 pause
+cls
