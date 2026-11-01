@@ -158,7 +158,7 @@ def getNightwave() -> None:
             CHALLENGES.add((ch['title'], ch['desc'], ch['reputation'], ch['expiry']))
         
         for ch in CHALLENGES:
-            print(f"{ch[0]} (+{ch[2]})¢{ch[1]}\n• {formatExpiry(ch[3])}\n")
+            print(f"{ch[0]} (+{ch[2]}) {ch[1]}\n• {formatExpiry(ch[3])}\n")
             sendNotification(f"{ch[0]} (+{ch[2]})", f"{ch[1]}\n{formatExpiry(ch[3])}")
 
         stop_event.wait(43200)# checks fissures every 12 hours
@@ -189,7 +189,10 @@ def getFissures() -> None:
     
         # API fetch returned as 'dict' generated from parsed JSON data
         data = res.json()
-        MISSIONS = tuple(filter(lambda f: f["tier"] == "Omnia", data))
+        MISSIONS = tuple(filter(
+            lambda f: (f["tier"] == "Omnia") or 'Eris' in f['node'],# will track Eris fissures until Epoch Operation Taubound ends
+            data
+        ))
         IDEAL_FISSURES = ("Survival", "Void Cascade")
 
         node:str
