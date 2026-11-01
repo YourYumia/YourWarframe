@@ -41,16 +41,6 @@ def sendNotification(title, notif_message) -> None:
 
 
 
-def getDuviri() -> None:
-    pass
-
-
-
-def getArchimedea() -> None:
-    pass
-
-
-
 def getArchon() -> None:
     url = f"https://api.warframestat.us/pc/archonHunt"
     
