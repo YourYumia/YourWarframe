@@ -7,4 +7,4 @@ A Warframe even tracker made by Yumia for personal use and coding practice.
 - Receive updates and reminders about the current active archon-hunt (and its corresponding shard)
 ## Coming Soon
 - 🔴 GUI, so you don't need that spooky cmd terminal running
-- 🟡 Nightwave tracking
+- 🔴 Archimedea tracking 

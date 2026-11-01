@@ -30,6 +30,17 @@ def getDateTime(utcTimeStr:str) -> str:
 
 
 
+def sendNotification(title, notif_message) -> None:
+    notification.notify(
+        title = title,
+        message = notif_message,
+        timeout = 3600,
+        app_name = "Your.Warframe",
+        app_icon = str(get_icon_path())
+    )
+
+
+
 def getArchon():
     url = f"https://api.warframestat.us/pc/archonHunt"
     
@@ -70,17 +81,48 @@ def getArchon():
         print(f"[{hunt_title}]: {notif_message}")
 
         stop_event.wait(57600)# check every 16 hours
+        
+        
 
+def getNightwave():
+    url = f"https://api.warframestat.us/pc/nightwave"
 
+    while not stop_event.is_set():
+        currentDateTime = datetime.now().strftime("%x (%H:%M)")
 
-def sendNotification(title, notif_message) -> None:
-    notification.notify(
-        title = title,
-        message = notif_message,
-        timeout = 3600,
-        app_name = "Your.Warframe",
-        app_icon = str(get_icon_path())
-    )
+        try:
+            res = requests.get(url, timeout=45)
+        except requests.exceptions.RequestException as error:
+            print(f"{currentDateTime}: Couldn't fetch nightwave ({error})")
+            stop_event.wait(1800)
+            continue
+        
+        # fail function if 'status' is not 'OK' (200)
+        if res.status_code != 200:
+            # note status code '521' could potentially suggest your connection IP was banned
+            # however, this being the case is very unlikely... even with a VPN
+            msg = "API down" if res.status_code == 521 else f"Couldn't fetch nightwave"
+            print(f"{currentDateTime}: {msg} (S:{res.status_code})")
+            stop_event.wait(1800)# check again in 30 minutes
+            continue
+        
+        # chalenges will be logged here with releveant data
+        CHALLENGES:set[tuple] = set()
+        
+        # API fetch returned as 'dict' generated from parsed JSON data
+        data = res.json()
+        
+        print(f"Weekly Reset: {formatExpiry(data['expiry'])}")
+        sendNotification(f"Weekly Reset:", f"{formatExpiry(data['expiry'])}")
+        
+        for ch in filter(lambda ch: '[PH]' not in ch['desc'], tuple(data['activeChallenges'])):
+            CHALLENGES.add((ch['title'], ch['desc'], ch['reputation'], ch['expiry']))
+        
+        for ch in CHALLENGES:
+            print(f"{ch[0]} (+{ch[2]})¢{ch[1]}\n• {formatExpiry(ch[3])}\n")
+            sendNotification(f"{ch[0]} (+{ch[2]})", f"{ch[1]}\n{formatExpiry(ch[3])}")
+
+        stop_event.wait(43200)# checks fissures every 12 hours
 
 
 
@@ -135,7 +177,8 @@ def getFissures():
 def main():
     threads = [
         Thread(target=getFissures, name="Fissure Tracker", daemon=True),
-        Thread(target=getArchon, name="Archon Tracker", daemon=True)
+        Thread(target=getArchon, name="Archon Tracker", daemon=True),
+        Thread(target=getNightwave, name="Nightwave Tracker", daemon=True)
     ]
 
     LAUNCH_TIME = datetime.now().strftime("%d/%m/%Y (%H:%M)")
