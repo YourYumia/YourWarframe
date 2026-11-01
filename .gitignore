@@ -9,6 +9,7 @@ __pycache__/
 # Personal files
 PROJECT_NOTES.md
 your.warframe.code-workspace
+update_dev.bat
 
 # Distribution / packaging
 __init__.py
