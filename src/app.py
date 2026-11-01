@@ -41,6 +41,16 @@ def sendNotification(title, notif_message) -> None:
 
 
 
+def getDuviri() -> None:
+    pass
+
+
+
+def getArchimedea() -> None:
+    pass
+
+
+
 def getArchon():
     url = f"https://api.warframestat.us/pc/archonHunt"
     
@@ -174,7 +184,7 @@ def getFissures():
 
 
 
-def main():
+def main() -> tuple:
     threads = [
         Thread(target=getFissures, name="Fissure Tracker", daemon=True),
         Thread(target=getArchon, name="Archon Tracker", daemon=True),
@@ -200,16 +210,16 @@ def main():
     except RuntimeError as e:
         pass
     finally:
-        print(f"[tracking ran from: {LAUNCH_TIME} to {END_TIME}]")
-        time.sleep(9)
-
-    for t in threads:
-        if t.is_alive():
-            continue
-        t.join()
-
+        for t in threads:
+            if t.is_alive():
+                continue
+            t.join()
+    
+    return (f"Your.Warframe Offline! (window will close itself)\n• tracking ran from: {LAUNCH_TIME} to {END_TIME}", 9)
 
 
 
 if __name__ == "__main__":
-    main()
+    EXIT_DATA = main()# (exit-msg, program-end-delay)
+    print(EXIT_DATA[0])
+    time.sleep(EXIT_DATA[1])
