@@ -11,6 +11,7 @@ PROJECT_NOTES.md
 your.warframe.code-workspace
 
 # Distribution / packaging
+__init__.py
 .Python
 backup/
 build/

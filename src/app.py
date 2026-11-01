@@ -134,26 +134,28 @@ def main():
 
     print("Your.Warframe Online!\n")
     print(f"[tracking starts]: {LAUNCH_TIME}\n")
+
     for t in threads:
         t.start()
         print(f"[launched {t.name}]\n")
         time.sleep(1)
 
-        try:
-            stop_event.wait()
-        except KeyboardInterrupt as e:
-            END_TIME = datetime.now().strftime("%d/%m/%Y (%H:%M)")
+    try:
+        stop_event.wait()
+    except KeyboardInterrupt as e:
+        END_TIME = datetime.now().strftime("%d/%m/%Y (%H:%M)")
+        print("Your.Warframe Offline! (window will close itself)\n")
+        stop_event.set()
+    except RuntimeError as e:
+        pass
+    finally:
+        print(f"[tracking ran from: {LAUNCH_TIME} to {END_TIME}]")
 
-            print("Your.Warframe Offline! (window will close itself)\n")
-            print(f"[tracking ran from: {LAUNCH_TIME} to {END_TIME}]")
-            stop_event.set()
-        except RuntimeError as e:
-            pass
+    for t in threads:
+        if t.is_alive():
+            continue
+        t.join()
 
-        for thread in threads:
-            thread.join()
-        time.sleep(10)
-        sys.exit()
 
 
 
