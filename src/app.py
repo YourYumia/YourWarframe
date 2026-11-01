@@ -174,7 +174,7 @@ def getFissures() -> None:
 
 
 
-def main() -> None:
+def main() -> tuple:
     threads = [
         Thread(target=getFissures, name="Fissure Tracker", daemon=True),
         Thread(target=getArchon, name="Archon Tracker", daemon=True),
@@ -195,21 +195,21 @@ def main() -> None:
         stop_event.wait()
     except KeyboardInterrupt as e:
         END_TIME = datetime.now().strftime("%d/%m/%Y (%H:%M)")
-        print("Your.Warframe Offline! (window will close itself)\n")
         stop_event.set()
     except RuntimeError as e:
         pass
     finally:
-        print(f"[tracking ran from: {LAUNCH_TIME} to {END_TIME}]")
-        time.sleep(9)
-
-    for t in threads:
-        if t.is_alive():
-            continue
-        t.join()
+        for t in threads:
+            if t.is_alive():
+                continue
+            t.join()
+    
+    return (f"Your.Warframe Offline! (window will close itself)\n• tracking ran from: {LAUNCH_TIME} to {END_TIME}", 9)
 
 
 
 
 if __name__ == "__main__":
-    main()
+    EXIT_DATA = main()
+    print(EXIT_DATA[0])
+    time.sleep(EXIT_DATA[1])
