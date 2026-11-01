@@ -189,7 +189,7 @@ def main():
     for t in threads:
         t.start()
         print(f"\n[launched {t.name}]\n")
-        time.sleep(1)
+        time.sleep(3)
 
     try:
         stop_event.wait()
@@ -201,6 +201,7 @@ def main():
         pass
     finally:
         print(f"[tracking ran from: {LAUNCH_TIME} to {END_TIME}]")
+        time.sleep(9)
 
     for t in threads:
         if t.is_alive():
