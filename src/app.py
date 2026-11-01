@@ -46,12 +46,41 @@ def getDuviri() -> None:
 
 
 
-def getArchimedea() -> None:
-    pass
+def getArchimedeas() -> None:
+    url = f"https://api.warframestat.us/pc/archimedeas"
+        
+    while not stop_event.is_set():
+        currentDateTime = datetime.now().strftime("%x (%H:%M)")
+
+        try:
+            res = requests.get(url, timeout=45)
+        except requests.exceptions.RequestException as error:
+            print(f"{currentDateTime}: Couldn't fetch archimedeas ({error})")
+            stop_event.wait(1800)
+            continue
+                
+        # fail function if 'status' is not 'OK' (200)
+        if res.status_code != 200:
+            # note status code '521' could potentially suggest your connection IP was banned
+            # however, this being the case is very unlikely... even with a VPN
+            msg = "API down" if res.status_code == 521 else f"Couldn't fetch archimedeas"
+            print(f"{currentDateTime}: {msg} (S:{res.status_code})")
+            stop_event.wait(1800)# check again in 30 minutes
+            continue
+
+        data = res.json()
+        ENTRATI = data[0]
+        TEMPORAL = data[1]
+        
+        for m in ENTRATI['missions']:
+            risk_str = ' '.join(tuple(map(lambda r: f"• {r['name']}: {r['description']}\n", m['risks'])))
+            print(f"{m['deviation']['name']} {m['missionType']}: {m['deviation']['description']}\n"+risk_str)
+        
+        stop_event.wait(57600)# check every 16 hours
 
 
 
-def getArchon():
+def getArchon() -> None:
     url = f"https://api.warframestat.us/pc/archonHunt"
     
     while not stop_event.is_set():
@@ -94,7 +123,7 @@ def getArchon():
         
         
 
-def getNightwave():
+def getNightwave() -> None:
     url = f"https://api.warframestat.us/pc/nightwave"
 
     while not stop_event.is_set():
@@ -136,7 +165,7 @@ def getNightwave():
 
 
 
-def getFissures():
+def getFissures() -> None:
     url = f"https://api.warframestat.us/pc/fissures"
 
     while not stop_event.is_set():
@@ -186,26 +215,18 @@ def getFissures():
 
 def main() -> tuple:
     threads = [
-        Thread(target=getFissures, name="Fissure Tracker", daemon=True),
-        Thread(target=getArchon, name="Archon Tracker", daemon=True),
-        Thread(target=getNightwave, name="Nightwave Tracker", daemon=True)
+        Thread(target=getArchimedeas, name="Archimedeas Tracker", daemon=True)
     ]
-
+    
     LAUNCH_TIME = datetime.now().strftime("%d/%m/%Y (%H:%M)")
-
-    print("Your.Warframe Online!\n")
-    print(f"[tracking starts]: {LAUNCH_TIME}")
-
+    
     for t in threads:
         t.start()
-        print(f"\n[launched {t.name}]\n")
-        time.sleep(3)
-
+    
     try:
         stop_event.wait()
     except KeyboardInterrupt as e:
         END_TIME = datetime.now().strftime("%d/%m/%Y (%H:%M)")
-        print("Your.Warframe Offline! (window will close itself)\n")
         stop_event.set()
     except RuntimeError as e:
         pass
@@ -215,7 +236,7 @@ def main() -> tuple:
                 continue
             t.join()
     
-    return (f"Your.Warframe Offline! (window will close itself)\n• tracking ran from: {LAUNCH_TIME} to {END_TIME}", 9)
+    return (f"Test concluded! (window will close itself)\n• test ran from: {LAUNCH_TIME} to {END_TIME}", 9)
 
 
 
