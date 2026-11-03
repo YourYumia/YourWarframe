@@ -149,10 +149,10 @@ def getFissures() -> None:
     
         # API fetch returned as 'dict' generated from parsed JSON data
         data = res.json()
-        MISSIONS = sorted(tuple(filter(
+        MISSIONS = tuple(sorted(filter(
             lambda f: (f["tier"] == "Omnia") or 'Eris' in f['node'],# will track Eris fissures until Epoch Operation Taubound ends
             data
-        ))),key=lambda m: m['expiry']
+        ),key=lambda m: m['expiry']))
         IDEAL_FISSURES = ("Survival", "Void Cascade")
 
         node:str
