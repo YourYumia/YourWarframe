@@ -106,17 +106,16 @@ def getNightwave() -> None:
             stop_event.wait(1800)# check again in 30 minutes
             continue
         
-        # chalenges will be logged here with releveant data
-        CHALLENGES:set[tuple] = set()
-        
         # API fetch returned as 'dict' generated from parsed JSON data
         data = res.json()
         
+        # chalenges will be logged here with releveant data
+        CHALLENGES = sorted(map(
+            lambda ch: (ch['title'], ch['desc'], ch['reputation'], ch['expiry']), filter(lambda ch: '[PH]' not in ch['desc'], tuple(data['activeChallenges']))
+        ),key=lambda ch: formatExpiry(ch[3]))
+        
         print(f"Weekly Reset: {formatExpiry(data['expiry'])}")
         sendNotification(f"Weekly Reset:", f"{formatExpiry(data['expiry'])}")
-        
-        for ch in filter(lambda ch: '[PH]' not in ch['desc'], tuple(data['activeChallenges'])):
-            CHALLENGES.add((ch['title'], ch['desc'], ch['reputation'], ch['expiry']))
         
         for ch in CHALLENGES:
             print(f"{ch[0]} (+{ch[2]}) {ch[1]}\n• {formatExpiry(ch[3])}\n")
@@ -150,10 +149,10 @@ def getFissures() -> None:
     
         # API fetch returned as 'dict' generated from parsed JSON data
         data = res.json()
-        MISSIONS = tuple(filter(
+        MISSIONS = sorted(tuple(filter(
             lambda f: (f["tier"] == "Omnia") or 'Eris' in f['node'],# will track Eris fissures until Epoch Operation Taubound ends
             data
-        ))
+        )),key=lambda m: m['expiry'])
         IDEAL_FISSURES = ("Survival", "Void Cascade")
 
         node:str
