@@ -110,9 +110,9 @@ def getNightwave() -> None:
         data = res.json()
         
         # chalenges will be logged here with releveant data
-        CHALLENGES = sorted(map(
+        CHALLENGES = tuple(sorted(map(
             lambda ch: (ch['title'], ch['desc'], ch['reputation'], ch['expiry']), filter(lambda ch: '[PH]' not in ch['desc'], tuple(data['activeChallenges']))
-        ),key=lambda ch: formatExpiry(ch[3]))
+        ),key=lambda ch: formatExpiry(ch[3])))
         
         print(f"Weekly Reset: {formatExpiry(data['expiry'])}")
         sendNotification(f"Weekly Reset:", f"{formatExpiry(data['expiry'])}")
@@ -149,7 +149,7 @@ def getFissures() -> None:
     
         # API fetch returned as 'dict' generated from parsed JSON data
         data = res.json()
-        MISSIONS = sorted(tuple(filter(
+        MISSIONS = tuple(sorted(filter(
             lambda f: (f["tier"] == "Omnia") or 'Eris' in f['node'],# will track Eris fissures until Epoch Operation Taubound ends
             data
         )),key=lambda m: m['expiry'])
@@ -166,7 +166,7 @@ def getFissures() -> None:
             mission_type = m["missionType"]
             date_time = getDateTime(formatExpiry(m["expiry"]))
             title = f"{mission_type} Fissure"
-            notif_message = f"{node} — {mission_type} (Omnia)\nEnds at {date_time}"
+            notif_message = f"{node} — {mission_type}\nEnds at {date_time}"
 
             if mission_type in IDEAL_FISSURES:
                 sendNotification(title, notif_message)
