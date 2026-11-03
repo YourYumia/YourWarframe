@@ -177,11 +177,11 @@ def getFissures() -> None:
 
 
 def main() -> tuple:
-    threads = [
+    threads = (
         Thread(target=getFissures, name="Fissure Tracker", daemon=True),
         Thread(target=getArchon, name="Archon Tracker", daemon=True),
         Thread(target=getNightwave, name="Nightwave Tracker", daemon=True)
-    ]
+    )
 
     LAUNCH_TIME = datetime.now().strftime("%d/%m/%Y (%H:%M)")
 
